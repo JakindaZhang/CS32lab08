@@ -13,6 +13,7 @@ SimpleList<T>::SimpleList() {
 template <class T>
 SimpleList<T>::~SimpleList() {
     delete[] elements; 
+    elements = nullptr;
 }
 
 
