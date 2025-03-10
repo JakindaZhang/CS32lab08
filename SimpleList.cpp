@@ -1,8 +1,8 @@
 //SimpleList.cpp to be completed by the student
 //
 #include "SimpleList.h"
-#include <stdexcept> 
-
+#include <stdexcept>
+#include <type_traits>  
 
 template <class T>
 SimpleList<T>::SimpleList() {
@@ -12,10 +12,15 @@ SimpleList<T>::SimpleList() {
 
 template <class T>
 SimpleList<T>::~SimpleList() {
-    delete[] elements; 
+    if constexpr (std::is_pointer<T>::value) {
+        for (int i = 0; i < numElements; i++) {
+            delete elements[i];  
+        }
+    }
+
+    delete[] elements;
     elements = nullptr;
 }
-
 
 template <class T>
 T SimpleList<T>::at(int index) const {
@@ -56,7 +61,7 @@ void SimpleList<T>::insert(T item) {
     if (numElements >= CAPACITY) {
         throw FullListException();
     }
-    elements[numElements++] = item; 
+    elements[numElements++] = item;
 }
 
 template <class T>
@@ -68,8 +73,12 @@ void SimpleList<T>::remove(int index) {
         throw InvalidIndexException();
     }
 
+    if constexpr (std::is_pointer<T>::value) {
+        delete elements[index];
+    }
+    
     for (int i = index; i < numElements - 1; i++) {
         elements[i] = elements[i + 1];
     }
-    numElements--; 
+    numElements--;
 }
